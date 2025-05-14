@@ -1,0 +1,1 @@
+pytest -s -v .\tests\test_1.py -p no:cacheprovider
