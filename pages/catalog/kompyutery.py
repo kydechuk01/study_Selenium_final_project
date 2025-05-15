@@ -9,7 +9,7 @@ from utils.logger import Logger
 
 
 class KompyuteryPage(Base):
-    """ класс для методов авторизации """
+    """ класс для методов страницы КАТАЛОГ:КОМПЬЮТЕРЫ """
 
     url = 'https://knsrussia.kns.ru/catalog/kompyutery/'
 

@@ -1,10 +1,9 @@
-import time
 from base.base_class import Base
 from utils.logger import Logger
 
 
 class MainPage(Base):
-    """ класс для методов авторизации """
+    """ класс для методов ГЛАВНОЙ страницы """
 
     url = 'https://knsrussia.kns.ru/'
 

@@ -14,7 +14,9 @@ from utils.logger import Logger
 
 
 class Base:
-    """ основной класс проекта """
+    """ ОСНОВНОЙ КЛАСС ПРОЕКТА
+        здесь хранятся локаторы и методы, универсальные для нескольких страниц сайта
+    """
 
     url = 'https://knsrussia.kns.ru/'
 
@@ -181,7 +183,6 @@ class Base:
         finish_choice_link.click()
 
 
-
     def enter_price_value_from(self, value: int):
         """ ввод ЗНАЧЕНИЯ в поле ЦЕНА ОТ """
         price_from_element = self.get_element(self.price_from_locator)
@@ -190,7 +191,7 @@ class Base:
         price_value_max = int(price_until_element.get_attribute("data-value-max"))
         if price_value_min < value < price_value_max:
             Logger.log_event(f'Фильтр "ЦЕНА ОТ/ДО" содержит мин/макс значения: {price_value_min}/{price_value_max}. '
-                  f'Устанавливаем новое значение ОТ = {value}')
+                             f'Устанавливаем новое значение ОТ = {value}')
             self.scroll_to_element(price_from_element)
             price_from_element.send_keys(str(value))
             price_from_element.send_keys(Keys.RETURN)
@@ -205,7 +206,7 @@ class Base:
 
         else:
             Logger.log_event(f'Новое значение ЦЕНА ОТ = {value} выходит за границы диапазона "ЦЕНА ОТ/ДО": '
-                  f'{price_value_min}/{price_value_max}. Установка значения невозможна.')
+                             f'{price_value_min}/{price_value_max}. Установка значения невозможна.')
 
 
     def enter_price_value_until(self, value: int):
@@ -216,7 +217,7 @@ class Base:
         price_value_max = int(price_until_element.get_attribute("data-value-max"))
         if price_value_min < value < price_value_max:
             Logger.log_event(f'Фильтр "ЦЕНА ОТ/ДО" содержит мин/макс значения: {price_value_min}/{price_value_max}. '
-                  f'Устанавливаем новое значение ДО = {value}')
+                             f'Устанавливаем новое значение ДО = {value}')
             self.scroll_to_element(price_until_element)
             price_until_element.send_keys(str(value))
             price_until_element.send_keys(Keys.RETURN)
@@ -232,7 +233,7 @@ class Base:
 
         else:
             Logger.log_event(f'Новое значение ЦЕНА ДО = {value} выходит за границы диапазона "ЦЕНА ОТ/ДО": '
-                  f'{price_value_min}/{price_value_max}. Установка значения невозможна.')
+                             f'{price_value_min}/{price_value_max}. Установка значения невозможна.')
 
 
     def set_sort_by_price(self, sort_order:str = "ASC"):
@@ -334,4 +335,3 @@ class Base:
         time.sleep(0.85)
         continue_shopping_link = self.get_element(self.basket_modal_continue_shopping_locator)
         continue_shopping_link.click()
-

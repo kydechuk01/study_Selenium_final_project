@@ -175,3 +175,4 @@ cython_debug/
 
 upload_repo.bat
 /auth_info/login*
+/video/*

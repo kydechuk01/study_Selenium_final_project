@@ -7,7 +7,7 @@ from utils.logger import Logger
 
 
 class MonitoryPage(Base):
-    """ класс для методов авторизации """
+    """ класс для методов страницы КАТАЛОГ:МОНИТОРЫ """
 
     url = 'https://knsrussia.kns.ru/catalog/monitory/'
 

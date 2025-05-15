@@ -10,7 +10,7 @@ from base.base_class import Base
 
 
 class ServicePage(Base):
-    """ класс для методов авторизации """
+    """ класс для методов страницы АВТОРИЗАЦИИ """
 
     url = 'https://knsrussia.kns.ru/service.html'
 

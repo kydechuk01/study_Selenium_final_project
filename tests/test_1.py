@@ -15,11 +15,11 @@ class Test_smoke:
     @pytest.mark.last
     def test_critical_path(self, conftest_driver):
 
-        """ проверка критического пути заказа товаров из разных категорий с фильтрами"""
+        """ проверка критического пути заказа товаров из разных категорий с фильтрами
+            [!] бОльшая часть задержек time.sleep нужна для визуальной демонстрации, чтобы не мелькало
+        """
 
-        # [!] бОльшая часть задержек time.sleep нужна для визуальной демонстрации, чтобы не мелькало
-
-        # переменные my_login, my_pass хранятся в .\auth_info\login_pass.py,
+        # переменные реального логина my_login, my_pass хранятся в .\auth_info\login_pass.py,
         # исключенном из проекта через .gitignore
         try:
             from auth_info.login_pass import my_login, my_pass
@@ -29,7 +29,6 @@ class Test_smoke:
         driver = conftest_driver  # получили драйвер из фикстуры
 
         """ подключаем классы СТРАНИЦ """
-
         service_page = ServicePage(driver)  # подключили класс страницы логина
         mp = MainPage(driver)  # подключили класс заглавной страницы /
         cat_mon = MonitoryPage(driver)  # класс каталог/мониторы

@@ -3,7 +3,7 @@ from utils.logger import Logger
 
 
 class BasketPage(Base):
-    """ класс для методов авторизации """
+    """ класс для методов КОРЗИНЫ """
 
     url = 'https://knsrussia.kns.ru/basket.aspx'
 
