@@ -5,6 +5,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from base.base_class import Base
+from utils.logger import Logger
 
 
 class KompyuteryPage(Base):
@@ -40,28 +41,28 @@ class KompyuteryPage(Base):
 
     def filter_i9_i7_processors(self):
         processor_series_filter = self.get_element(self.processor_series_filter_locator)
-        self.scroll_to_element(processor_series_filter)
-        print("Нажимается кнопка 'Серия процессора'")
+        self.move_to_element(processor_series_filter)
+        Logger.log_event("Нажимается кнопка 'Серия процессора'")
         processor_series_filter.click()
         time.sleep(1)
 
         processor_series_expandall = self.get_element(self.processor_series_expandall_locator)
-        self.scroll_to_element(processor_series_expandall)
-        print("Нажимается кнопка 'Показать все'")
+        self.move_to_element(processor_series_expandall)
+        Logger.log_event("Нажимается кнопка 'Показать все'")
         WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(processor_series_expandall))
         processor_series_expandall.click()
         time.sleep(1)
 
         processor_corei7 = self.get_element(self.processor_series_corei7_locator)
-        self.scroll_to_element(processor_corei7)
-        print(f"Нажимается фильтр {processor_corei7.text}")
+        self.move_to_element(processor_corei7)
+        Logger.log_event(f"Нажимается фильтр {processor_corei7.text}")
         WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(processor_corei7))
         processor_corei7.click()
         time.sleep(1)
 
         processor_corei9 = self.get_element(self.processor_series_corei9_locator)
-        self.scroll_to_element(processor_corei9)
-        print(f"Нажимается фильтр {processor_corei9.text}")
+        self.move_to_element(processor_corei9)
+        Logger.log_event(f"Нажимается фильтр {processor_corei9.text}")
         WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(processor_corei9))
         processor_corei9.click()
         time.sleep(1)
@@ -76,14 +77,14 @@ class KompyuteryPage(Base):
         # само-пропадающим попапом "показать" после клика на каждом фильтре
 
         videocard_series_filter = self.get_element(self.videocard_series_filter_locator)
-        self.scroll_to_element(videocard_series_filter)
-        print("Нажимается кнопка 'Видеокарта'")
+        self.move_to_element(videocard_series_filter)
+        Logger.log_event("Нажимается кнопка 'Видеокарта'")
         videocard_series_filter.click()
         time.sleep(1)
 
         videocard_expandall = self.get_element(self.videocard_series_expandall_locator)
-        self.scroll_to_element(videocard_expandall)
-        print("Нажимается кнопка 'Показать все'")
+        self.move_to_element(videocard_expandall)
+        Logger.log_event("Нажимается кнопка 'Показать все'")
         videocard_expandall.click()
         time.sleep(1)
 
@@ -95,11 +96,11 @@ class KompyuteryPage(Base):
         videocard_series_4070_filter_list = self.get_elements(self.videocard_series_4070_locators)
         for video_link in videocard_series_4070_filter_list:
             time.sleep(1)
-            self.scroll_to_element(video_link)
+            self.move_to_element(video_link)
             # иногда попап с предложением "показать" возникает поверх списка фильтров, и клик попадает не в фильтр,
             # а в постороннее окно, выбрасывая исключение
             WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(video_link))
-            print(f"Нажимается фильтр {video_link.text}")
+            Logger.log_event(f"Нажимается фильтр {video_link.text}")
             video_link.click()
 
         time.sleep(1)
@@ -112,7 +113,7 @@ class KompyuteryPage(Base):
         ram_size_filter = self.get_element(self.ram_size_filter_locator)
         self.scroll_to_element(ram_size_filter)
         WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(ram_size_filter))
-        print(f"Нажимается кнопка '{ram_size_filter.text}'")
+        Logger.log_event(f"Нажимается кнопка '{ram_size_filter.text}'")
         ram_size_filter.click()
 
         ram_size_expandall = self.get_element(self.ram_size_expandall_locator)
@@ -124,7 +125,7 @@ class KompyuteryPage(Base):
             self.scroll_to_element(ram_filter)
             WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(ram_filter))
             ram_filter.click()
-            print(f"Нажимается фильтр {ram_filter.text}")
+            Logger.log_event(f"Нажимается фильтр {ram_filter.text}")
 
         time.sleep(1)
         self.click_finish_choice()

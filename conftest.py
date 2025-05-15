@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import pytest
+from utils.logger import Logger
 
 
 @pytest.fixture()
@@ -18,7 +19,8 @@ def conftest_driver():
     service = ChromeService(ChromeDriverManager().install())
     chromedriver = webdriver.Chrome(service=service, options=options)
 
-    print('|-->> Start test')
+    Logger.log_event('|-->> Start test')
     yield chromedriver
-    print('-->>| Finish test')
+    Logger.log_event('-->>| Finish test')
+
     chromedriver.close()

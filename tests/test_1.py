@@ -7,6 +7,7 @@ from pages.service_page import ServicePage
 from pages.catalog.monitory import MonitoryPage
 from pages.catalog.kompyutery import KompyuteryPage
 from pages.basket import BasketPage
+from utils.logger import Logger
 
 
 class Test_smoke:
@@ -37,9 +38,11 @@ class Test_smoke:
 
         # скипаем процедуру авторизации, если у нас не подгрузились логин и пароль
         if my_login and my_pass:
-            print(f'Попытка логина с данными: {my_login} : {my_pass[:2]}{"*" * (len(my_pass) - 2)}')
+            Logger.log_event(f'Попытка логина с данными: {my_login} : {my_pass[:2]}{"*" * (len(my_pass) - 2)}')
             service_page.authorize(my_login, my_pass)
             time.sleep(1)
+        else:
+            Logger.log_event('Файл auth_info\\login_pass.py отсутствует. Пропускаем этап авторизации. ')
 
         # service_page.logout()  # пока отключено за ненадобностью в этом тесте
 
@@ -91,19 +94,19 @@ class Test_smoke:
         """ Установка фильтров МОНИТОРЫ: END """
 
         monitors_list = mp.get_goods_items_list()
-        print(f'\nПолучено {len(monitors_list)} товаров:')
+        Logger.log_event(f'\nПолучено {len(monitors_list)} товаров:')
         cat_mon.print_goods_items_list(monitors_list)
 
-        print("\nДобавляем 3 монитора в список заказанных товаров:")
+        Logger.log_event("\nДобавляем 3 монитора в список заказанных товаров:")
 
         monitors_ordered = []  # пустой список для логической точки отсчета
         monitors_ordered += monitors_list[0:3]  # добавляем заказанное в список
         cat_mon.print_goods_items_list(monitors_ordered)
 
-        print("\nДобавляем товары в корзину:")
+        Logger.log_event("\nДобавляем товары в корзину:")
         for item in monitors_ordered:
             basket_element: WebElement = item['add_to_basket_link']
-            print(f"Добавление к корзину: {item['name']}, цена {item['price']}")
+            Logger.log_event(f"Добавление к корзину: {item['name']}, цена {item['price']}")
             mp.add_to_basket(basket_element)
 
         ordered_items += monitors_ordered  # добавляем заказанные мониторы в общий список
@@ -113,11 +116,11 @@ class Test_smoke:
         basket.compare_order_with_basket(ordered_items)
         basket.compare_order_summ_with_basket(ordered_items)
 
-        print("Проверка функционала Выбор МОНИТОРА завершена. <--|")
+        Logger.log_event("Проверка функционала Выбор МОНИТОРА завершена. <--|")
 
         """ Подтест-2: добавляем КОМПЬЮТЕР """
 
-        print("Начало проверки функционала Выбор ПК |-->.")
+        Logger.log_event("Начало проверки функционала Выбор ПК |-->.")
 
         cat_komp.open_page()
         cat_komp.get_current_url()
@@ -143,17 +146,17 @@ class Test_smoke:
         cat_komp.get_current_url()
 
         computers_list = mp.get_goods_items_list()
-        print(f'\nПолучено {len(computers_list)} товаров:')
+        Logger.log_event(f'\nПолучено {len(computers_list)} товаров:')
         cat_komp.print_goods_items_list(computers_list)
 
-        print("\nДобавляем первые два в списке Компьютер в список заказанных товаров:")
+        Logger.log_event("\nДобавляем первые два в списке Компьютер в список заказанных товаров:")
         computers_ordered = [computers_list[0]]  # создаем список из 1 товара
         cat_komp.print_goods_items_list(computers_ordered)
 
-        print("\nДобавляем товары в корзину:")
+        Logger.log_event("\nДобавляем товары в корзину:")
         for item in computers_ordered:
             basket_element: WebElement = item['add_to_basket_link']
-            print(f"Добавление к корзину: {item['name']}, цена {item['price']}")
+            Logger.log_event(f"Добавление к корзину: {item['name']}, цена {item['price']}")
             mp.add_to_basket(basket_element)
 
         ordered_items += computers_ordered  # добавляем выбранные компьютеры в общий список товаров
@@ -163,11 +166,11 @@ class Test_smoke:
         basket.compare_order_with_basket(ordered_items)
         basket.compare_order_summ_with_basket(ordered_items)
 
-        print("Проверка функционала Выбор ПК завершена. <--|")
-        print("Тест критического пути завершен. <--|")
+        Logger.log_event("Проверка функционала Выбор ПК завершена. <--|")
+        Logger.log_event("Тест критического пути завершен. <--|")
 
-    @pytest.mark.skip(reason="Пропускаем этот тест на время основной отладки")
-    # @pytest.mark.tryfirst
+    # @pytest.mark.skip(reason="Пропускаем этот тест на время основной отладки")
+    @pytest.mark.tryfirst
     def test_wrong_authorization(self, conftest_driver):
         """ проверка заведомо некорректного логина """
 
@@ -175,5 +178,5 @@ class Test_smoke:
         my_pass = 'test_pass'
         driver = conftest_driver
         service_page = ServicePage(driver)
-        print(f'Попытка логина с несуществующими данными: {my_login} : {my_pass}')
+        Logger.log_event(f'Попытка логина с несуществующими данными: {my_login} : {my_pass}')
         service_page.authorize(my_login, my_pass, bad_login=True)

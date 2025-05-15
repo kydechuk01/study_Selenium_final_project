@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from utils.logger import Logger
 
 from base.base_class import Base
 
@@ -76,19 +76,19 @@ class ServicePage(Base):
         """ тест на заведомо некорректный логин"""
         assert self.get_login_alert().text == self.alert_wrong_login_message, \
             'Сообщение об неверном логине или пароле не обнаружено!'
-        print(f'Авторизация не пройдена. Обнаружено сообщение "{self.alert_wrong_login_message}".')
+        Logger.log_event(f'Авторизация не пройдена. Обнаружено сообщение "{self.alert_wrong_login_message}".')
 
     def assert_good_login(self):
         """ попытка успешной авторизации"""
         assert self.get_cabinet_orderslist_title().text == self.cabinet_orders_list_message, \
             'Авторизация не прошла. Ошибка в логине или пароле.'
-        print(f'Авторизация успешно пройдена.')
+        Logger.log_event(f'Авторизация успешно пройдена.')
 
 
     def logout(self):
         logout_link = self.get_logout_link()
         logout_link.click()
-        print(f'Нажата ссылка logoff')
+        Logger.log_event(f'Нажата ссылка logoff')
         self.get_current_url()
 
 # Methods
@@ -96,9 +96,9 @@ class ServicePage(Base):
     def authorize(self, login, password, bad_login=False):
         """ если bad_login==True, то тестируется негативный сценарий с неверным логином"""
         if bad_login:
-            print('Авторизация по негативному сценарию')
+            Logger.log_event('Авторизация по негативному сценарию')
         else:
-            print('Авторизация по позитивному сценарию')
+            Logger.log_event('Авторизация по позитивному сценарию')
 
         self.open_page()
         self.enter_login_password(login, password)

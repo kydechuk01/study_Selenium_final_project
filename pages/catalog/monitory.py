@@ -3,6 +3,7 @@ from base.base_class import Base
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from utils.logger import Logger
 
 
 class MonitoryPage(Base):
@@ -27,7 +28,7 @@ class MonitoryPage(Base):
 
     def select_filter_ultrawide(self):
         filter_subrubricks_ultrawide = self.get_element(self.mon_model_type_ultrawide)
-        print(f'Нажат чекбокс-линк для фильтра "Подрубрики: Ultrawide" с локатором {self.mon_model_type_ultrawide}')
+        Logger.log_event(f'Нажат чекбокс-линк для фильтра "Подрубрики: Ultrawide" с локатором {self.mon_model_type_ultrawide}')
         filter_subrubricks_ultrawide.click()
         time.sleep(1)
 
@@ -39,7 +40,7 @@ class MonitoryPage(Base):
     def select_filter_IPS(self):
 
         filter_IPS = self.get_element(self.mon_matrix_type_IPS_locator)
-        print(f'Нажат чекбокс-линк для фильтра "Подрубрики: Ultrawide" с локатором {self.mon_matrix_type_IPS_locator}')
+        Logger.log_event(f'Нажат чекбокс-линк для фильтра "Подрубрики: Ultrawide" с локатором {self.mon_matrix_type_IPS_locator}')
         filter_IPS.click()
         time.sleep(1)
 

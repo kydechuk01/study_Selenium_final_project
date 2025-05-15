@@ -10,6 +10,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import *
 
+from utils.logger import Logger
+
 
 class Base:
     """ основной класс проекта """
@@ -58,7 +60,7 @@ class Base:
 
     def get_current_url(self):
         url = self.driver.current_url
-        print('Текущий url = ' + url)
+        Logger.log_event('Текущий url = ' + url)
         return url
 
 
@@ -89,12 +91,12 @@ class Base:
         """ Проверка соответствия значения .text для элемента ожидаемому """
         textvalue = webelement.text
         assert textvalue == expected_text, f"Значение {textvalue} не соответствует ожидаемому {expected_text}"
-        print(f'Проверка значения элемента {textvalue} - ОК')
+        Logger.log_event(f'Проверка значения элемента {textvalue} - ОК')
 
 
     def scroll_to_element(self, element: WebElement):
         if self.driver is None or element is None:
-            print("Ошибка scroll_to_element: driver или element = None")
+            Logger.log_event("Ошибка scroll_to_element: driver или element = None")
             raise ValueError("Driver/element не может быть None")
         try:
             # actions = ActionChains(self.driver)
@@ -102,7 +104,7 @@ class Base:
             # [!] для блока фильтров у сайта kns почему-то лучше работает скролл через js, иначе через раз вываливается
             # очень странная ошибка ElementClickInterceptedException с причиной "элемент перекрывает сам себя"
             # [!] причем наиважнейший аргумент в скролле - это block:'center'
-            # print(f'scroll до элемента {element.text}')
+            # Logger.log_event(f'scroll до элемента {element.text}')
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)  # js-прокрутка
             WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(element))
 
@@ -110,23 +112,23 @@ class Base:
                 NoSuchElementException,
                 ElementNotInteractableException,
                 AttributeError) as err:
-            print(f'Ошибка scroll_to_element {element.text}: {err}')
+            Logger.log_event(f'Ошибка scroll_to_element {element.text}: {err}')
             return
 
 
     def move_to_element(self, element: WebElement):
         if self.driver is None or element is None:
-            print("Ошибка move_to_element: driver или element = None")
+            Logger.log_event("Ошибка move_to_element: driver или element = None")
             raise ValueError("Driver/element не может быть None")
         try:
             actions = ActionChains(self.driver)
-            # print(f'Перемещение курсора к элементу {element.text}')
+            # Logger.log_event(f'Перемещение курсора к элементу {element.text}')
             actions.move_to_element(element).perform()
         except (StaleElementReferenceException,
                 NoSuchElementException,
                 ElementNotInteractableException,
                 AttributeError) as err:
-            print(f'Ошибка move_to_element {element.text}: {err}')
+            Logger.log_event(f'Ошибка move_to_element {element.text}: {err}')
             return
 
 
@@ -136,12 +138,12 @@ class Base:
         if cookie_button is not None:
             WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(cookie_button))
             cookie_button.click()
-            print('Нажата кнопка "Принять" для cookie-alert')
+            Logger.log_event('Нажата кнопка "Принять" для cookie-alert')
 
 
     def js_click(self, element: WebElement):
         # для некоторых случаев, когда кнопка не нажимается обычным методом
-        print('Запущено нажатие на кнопку при помощи js.click()')
+        Logger.log_event('Запущено нажатие на кнопку при помощи js.click()')
         self.driver.execute_script("arguments[0].click();", element)
 
 
@@ -149,7 +151,7 @@ class Base:
         expand_node = self.get_element(locator)
         WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(expand_node))
         expand_node.click()
-        print(f'Нажата категория фильтра: {expand_node.text}')
+        Logger.log_event(f'Нажата категория фильтра: {expand_node.text}')
 
 
     def click_search_popup_show_link(self):
@@ -160,11 +162,11 @@ class Base:
             search_summary = str(search_popup_node.text)
             search_summary = search_summary.split('\n')[0]
         except TimeoutException:
-            print('Попап не появился')
+            Logger.log_event('Попап не появился')
         else:
             search_popup_link = self.get_element(self.search_popup_link_locator)
             self.scroll_to_element(search_popup_link)
-            print(f"Нажимается кнопка '{search_popup_link.text}' на всплывающем попапе с сообщением {search_summary}")
+            Logger.log_event(f"Нажимается кнопка '{search_popup_link.text}' на всплывающем попапе с сообщением {search_summary}")
             # self.js_click(search_popup_link)
             WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable(search_popup_link))
             search_popup_link.click()
@@ -175,7 +177,7 @@ class Base:
         finish_choice_link = self.get_element(self.filter_choice_locator)
         self.scroll_to_element(finish_choice_link)
         WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(finish_choice_link))
-        print("Нажимается кнопка 'Выбрать' для подтверждения всех фильтров")
+        Logger.log_event("Нажимается кнопка 'Выбрать' для подтверждения всех фильтров")
         finish_choice_link.click()
 
 
@@ -187,7 +189,7 @@ class Base:
         price_value_min = int(price_from_element.get_attribute("data-value-min"))
         price_value_max = int(price_until_element.get_attribute("data-value-max"))
         if price_value_min < value < price_value_max:
-            print(f'Фильтр "ЦЕНА ОТ/ДО" содержит мин/макс значения: {price_value_min}/{price_value_max}. '
+            Logger.log_event(f'Фильтр "ЦЕНА ОТ/ДО" содержит мин/макс значения: {price_value_min}/{price_value_max}. '
                   f'Устанавливаем новое значение ОТ = {value}')
             self.scroll_to_element(price_from_element)
             price_from_element.send_keys(str(value))
@@ -199,10 +201,10 @@ class Base:
 
             # тест успешности метода
             assert price_from_value == value, f'Не получилось установить поле фильтра: ЦЕНА ОТ = {value}'
-            print(f"Новое значение фильтра ЦЕНА ОТ: {price_from_value}")
+            Logger.log_event(f"Новое значение фильтра ЦЕНА ОТ: {price_from_value}")
 
         else:
-            print(f'Новое значение ЦЕНА ОТ = {value} выходит за границы диапазона "ЦЕНА ОТ/ДО": '
+            Logger.log_event(f'Новое значение ЦЕНА ОТ = {value} выходит за границы диапазона "ЦЕНА ОТ/ДО": '
                   f'{price_value_min}/{price_value_max}. Установка значения невозможна.')
 
 
@@ -213,7 +215,7 @@ class Base:
         price_value_min = int(price_from_element.get_attribute("data-value-min"))
         price_value_max = int(price_until_element.get_attribute("data-value-max"))
         if price_value_min < value < price_value_max:
-            print(f'Фильтр "ЦЕНА ОТ/ДО" содержит мин/макс значения: {price_value_min}/{price_value_max}. '
+            Logger.log_event(f'Фильтр "ЦЕНА ОТ/ДО" содержит мин/макс значения: {price_value_min}/{price_value_max}. '
                   f'Устанавливаем новое значение ДО = {value}')
             self.scroll_to_element(price_until_element)
             price_until_element.send_keys(str(value))
@@ -226,10 +228,10 @@ class Base:
 
             # тест успешности метода
             assert price_until_value == value, f'Не получилось установить поле фильтра: ЦЕНА ДО = {value}'
-            print(f"Новое значение фильтра ЦЕНА ОТ: {price_until_value}")
+            Logger.log_event(f"Новое значение фильтра ЦЕНА ОТ: {price_until_value}")
 
         else:
-            print(f'Новое значение ЦЕНА ДО = {value} выходит за границы диапазона "ЦЕНА ОТ/ДО": '
+            Logger.log_event(f'Новое значение ЦЕНА ДО = {value} выходит за границы диапазона "ЦЕНА ОТ/ДО": '
                   f'{price_value_min}/{price_value_max}. Установка значения невозможна.')
 
 
@@ -244,19 +246,19 @@ class Base:
         sort_by_price = self.get_element(self.sort_by_price_locator)
         current_sort_type = sort_node.get_attribute("data-sort-type")  # "Price"
         current_sort_order = sort_node.get_attribute("data-id")  # "ASC", "DESC"
-        print(f'Текущий режим сортировки: по {current_sort_type}:{current_sort_order}')
-        print(f'Попытка установить сортировку: по ЦЕНА:{sort_order}')
+        Logger.log_event(f'Текущий режим сортировки: по {current_sort_type}:{current_sort_order}')
+        Logger.log_event(f'Попытка установить сортировку: по ЦЕНА:{sort_order}')
 
         # проверяем случай, когда настройки сортировки уже те, которые нужны
         if current_sort_type == "Price" and current_sort_order == sort_order:
-            print(f'Сортировка: по ЦЕНА:{sort_order} задана успешно.')
+            Logger.log_event(f'Сортировка: по ЦЕНА:{sort_order} задана успешно.')
             return
 
         if current_sort_type != "Price":
             # сначала надо установить Price в качестве целевой сортировки,
             # помним, что это действие сбрасывает порядок сортировки
             sort_by_price.click()
-            print(f"Тип сортировки не соответствует. Нажата кнопка сортировки: по ЦЕНА.")
+            Logger.log_event(f"Тип сортировки не соответствует. Нажата кнопка сортировки: по ЦЕНА.")
             # time.sleep(1)
 
             # перечитываем состояние узла сортировки
@@ -267,7 +269,7 @@ class Base:
 
         if current_sort_order != sort_order:
             inverse_sort_order = sort_node.get_attribute("data-inverse")
-            print(f'Меняем порядок сортировки на: {inverse_sort_order}')
+            Logger.log_event(f'Меняем порядок сортировки на: {inverse_sort_order}')
             sort_by_price.click()  # повторный клик для инверсии сортировки
             # time.sleep(1)
             # еще раз перечитываем состояние узла сортировки
@@ -278,7 +280,7 @@ class Base:
         # финальная проверка
         assert current_sort_type == "Price" and current_sort_order == sort_order, f"Ошибка выбора сортировки: по " \
                                                                                   f"ЦЕНА:{sort_order}"
-        print(f'Сортировка: по ЦЕНА:{sort_order} задана успешно.')
+        Logger.log_event(f'Сортировка: по ЦЕНА:{sort_order} задана успешно.')
         return
 
 # Methods
@@ -317,11 +319,11 @@ class Base:
     def print_goods_items_list(goods_list):
         """ вывод в консоль списка товаров """
         if len(goods_list) < 1:
-            return print('Список товаров пуст.')
+            return Logger.log_event('Список товаров пуст.')
         for i, item in enumerate(goods_list):
             output = f'Товар # {i}: {item["name"]} (sku:{item["sku"]}). Цена: {item["price"]}.'
             output += f'\n Ссылка: {item["url"]}'
-            print(output)
+            Logger.log_event(output)
 
 
     def add_to_basket(self, add_to_basket_button: WebElement):

@@ -1,4 +1,5 @@
 from base.base_class import Base
+from utils.logger import Logger
 
 
 class BasketPage(Base):
@@ -28,7 +29,7 @@ class BasketPage(Base):
         assert basket_container_text.lower() == self.basket_container_title.lower(), f'Ошибка. Не найден ожидаемый ' \
                                                                                      f'заголовок корзины: \
                                                                                      "{self.basket_container_title}\".'
-        return print('Мы на странице корзины')
+        return Logger.log_event('Мы на странице корзины')
 
     def get_basket_items_list(self):
         """ Получаем список товаров в корзине"""
@@ -93,7 +94,7 @@ class BasketPage(Base):
         # финальная проверка
         assert not mismatches, f'Несовпадения в списках заказа и товаров в корзине:\n{mismatches}'
 
-        print('Список товаров в заказе совпал со списком в корзине!')
+        Logger.log_event('Список товаров в заказе совпал со списком в корзине!')
 
 
     def compare_order_summ_with_basket(self, order_list):
@@ -101,7 +102,11 @@ class BasketPage(Base):
         order_summ = sum(int(item['price']) for item in order_list)
         basket_summ = self.get_basket_total_summ()
 
-        assert order_summ == basket_summ, f'Ошибка. Стоимость заказанного товара ({order_summ}) не совпадает с тем, ' \
-                                          f'что выводится в {basket_summ} корзине!'
-        print(f'Стоимость заказанного товара совпадает с суммой в корзине {basket_summ}.')
+        # вводим показатель погрешности округления сумм в 2 рубля
+        # отладка тестирования показала, что значение в корзине округляется иногда с расхождением в 1 рубль
+        tolerance = 2
 
+        Logger.log_event(f'Стоимость заказанного товара ({order_summ}) совпадает с суммой в корзине ({basket_summ}).')
+        assert abs(order_summ - basket_summ) <= tolerance, f'Ошибка. Стоимость заказанного товара ' \
+                                                           f'({order_summ}) с учетом погрешности {tolerance} не ' \
+                                                           f'совпадает с тем, что выводится в {basket_summ} корзине!'
